@@ -1,12 +1,12 @@
-package dos
+package shortcut
 
 import (
 	"github.com/go-ole/go-ole"
 	"github.com/go-ole/go-ole/oleutil"
 )
 
-// WScriptShell create OLE Object for "WScript.Shell"
-func WScriptShell() (*ole.IUnknown, *ole.IDispatch, error) {
+// wScriptShell create OLE Object for "WScript.Shell"
+func wScriptShell() (*ole.IUnknown, *ole.IDispatch, error) {
 	agent, err := oleutil.CreateObject("WScript.Shell")
 	if err != nil {
 		return nil, nil, err
@@ -19,9 +19,9 @@ func WScriptShell() (*ole.IUnknown, *ole.IDispatch, error) {
 	return agent, agentDis, nil
 }
 
-// ReadShortcut reads *.lnk file and returns targetpath and working-directory.
-func ReadShortcut(path string) (string, string, error) {
-	agent, agentDis, err := WScriptShell()
+// Read reads *.lnk file and returns targetpath and working-directory.
+func Read(path string) (string, string, error) {
+	agent, agentDis, err := wScriptShell()
 	if err != nil {
 		return "", "", err
 	}
@@ -45,8 +45,8 @@ func ReadShortcut(path string) (string, string, error) {
 }
 
 // MakeShortcut makes *.lnk file
-func MakeShortcut(from, to, dir string) error {
-	agent, agentDis, err := WScriptShell()
+func Make(from, to, dir string) error {
+	agent, agentDis, err := wScriptShell()
 	if err != nil {
 		return err
 	}
