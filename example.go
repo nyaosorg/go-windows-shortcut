@@ -5,7 +5,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/go-ole/go-ole"
 	"github.com/zetamatta/go-windows-shortcut"
@@ -21,19 +20,16 @@ func main1() error {
 	src1 := os.Args[1]
 	dst1 := os.Args[2]
 
-	if strings.HasSuffix(strings.ToUpper(dst1), ".lnk") {
-		dst1 += ".lnk"
-	}
-
-	fmt.Printf("%s --> %s\n", src1, dst1)
+	fmt.Printf("make shortcut: %s --> %s\n", src1, dst1)
 	if err := shortcut.Make(src1, dst1, ""); err != nil {
 		return err
 	}
-	src2, dir, err := shortcut.Read(dst1)
+
+	src2, _, err := shortcut.Read(dst1)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("%s <-- %s @ %s\n", dst1, src2, dir)
+	fmt.Printf("read shortcut: %s <-- %s\n", dst1, src2)
 	return nil
 }
 
