@@ -7,33 +7,35 @@ import (
 	"github.com/go-ole/go-ole/oleutil"
 )
 
-// wScriptShell create OLE Object for "WScript.Shell"
-func wScriptShell() (*ole.IUnknown, *ole.IDispatch, error) {
-	agent, err := oleutil.CreateObject("WScript.Shell")
-	if err != nil {
-		return nil, nil, err
-	}
-	agentDis, err := agent.QueryInterface(ole.IID_IDispatch)
-	if err != nil {
-		agent.Release()
-		return nil, nil, err
-	}
-	return agent, agentDis, nil
+// WShell is the OLE Object for "WScript.Shell"
+type WShell struct {
+	agent    *ole.IUnknown
+	dispatch *ole.IDispatch
 }
 
-// Read reads *.lnk file and returns targetpath and working-directory.
-func Read(path string) (string, string, error) {
-	path, err := filepath.Abs(path)
+// NewWShell creates OLE Object for "WScript.Shell".
+func NewWShell() (*WShell, error) {
+	agent, err := oleutil.CreateObject("WScript.Shell")
 	if err != nil {
-		return "", "", err
+		return nil, err
 	}
-	agent, agentDis, err := wScriptShell()
+	dispatch, err := agent.QueryInterface(ole.IID_IDispatch)
 	if err != nil {
-		return "", "", err
+		agent.Release()
+		return nil, err
 	}
-	defer agent.Release()
-	defer agentDis.Release()
-	shortcut, err := oleutil.CallMethod(agentDis, "CreateShortCut", path)
+	return &WShell{agent: agent, dispatch: dispatch}, nil
+}
+
+// Close releases the OLE Object for "WScript.Shell".
+func (wsh *WShell) Close() {
+	wsh.dispatch.Release()
+	wsh.agent.Release()
+}
+
+// Read reads the data of shortcut file. `path` must be absolute path.
+func (wsh *WShell) Read(path string) (target string, workingdir string, err error) {
+	shortcut, err := oleutil.CallMethod(wsh.dispatch, "CreateShortCut", path)
 	if err != nil {
 		return "", "", err
 	}
@@ -50,23 +52,24 @@ func Read(path string) (string, string, error) {
 	return targetPath.ToString(), workingDir.ToString(), err
 }
 
-// MakeShortcut makes *.lnk file
-func Make(from, to, dir string) error {
-	from, err := filepath.Abs(from)
+// Read reads the data of shortcut file. `path` can be relative path.
+func Read(path string) (targetPath string, workingDir string, err error) {
+	path, err = filepath.Abs(path)
 	if err != nil {
-		return err
+		return "", "", err
 	}
-	to, err = filepath.Abs(to)
+	wsh, err := NewWShell()
 	if err != nil {
-		return err
+		return "", "", err
 	}
-	agent, agentDis, err := wScriptShell()
-	if err != nil {
-		return err
-	}
-	defer agent.Release()
-	defer agentDis.Release()
-	shortcut, err := oleutil.CallMethod(agentDis, "CreateShortCut", to)
+	defer wsh.Close()
+
+	return wsh.Read(path)
+}
+
+// Make makes a shortcut file.`from`,`to` must be absolute path.
+func (wsh *WShell) Make(from, to, dir string) error {
+	shortcut, err := oleutil.CallMethod(wsh.dispatch, "CreateShortCut", to)
 	if err != nil {
 		return err
 	}
@@ -82,4 +85,23 @@ func Make(from, to, dir string) error {
 	}
 	_, err = oleutil.CallMethod(shortcutDis, "Save")
 	return err
+}
+
+// Make makes a shortcut file. `from`,`to` can be relative paths
+func Make(from, to, dir string) error {
+	from, err := filepath.Abs(from)
+	if err != nil {
+		return err
+	}
+	to, err = filepath.Abs(to)
+	if err != nil {
+		return err
+	}
+	wsh, err := NewWShell()
+	if err != nil {
+		return err
+	}
+	defer wsh.Close()
+
+	return wsh.Make(from, to, dir)
 }
