@@ -5,7 +5,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/go-ole/go-ole"
@@ -19,17 +18,13 @@ func main1() error {
 	if len(os.Args) < 3 {
 		return fmt.Errorf("Usage: go run example.go SRC DST")
 	}
-	src1, err := filepath.Abs(os.Args[1])
-	if err != nil {
-		return err
-	}
-	dst1, err := filepath.Abs(os.Args[2])
-	if err != nil {
-		return err
-	}
+	src1 := os.Args[1]
+	dst1 := os.Args[2]
+
 	if strings.HasSuffix(strings.ToUpper(dst1), ".lnk") {
 		dst1 += ".lnk"
 	}
+
 	fmt.Printf("%s --> %s\n", src1, dst1)
 	if err := shortcut.Make(src1, dst1, ""); err != nil {
 		return err

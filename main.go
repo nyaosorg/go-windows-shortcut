@@ -1,6 +1,8 @@
 package shortcut
 
 import (
+	"path/filepath"
+
 	"github.com/go-ole/go-ole"
 	"github.com/go-ole/go-ole/oleutil"
 )
@@ -21,6 +23,10 @@ func wScriptShell() (*ole.IUnknown, *ole.IDispatch, error) {
 
 // Read reads *.lnk file and returns targetpath and working-directory.
 func Read(path string) (string, string, error) {
+	path, err := filepath.Abs(path)
+	if err != nil {
+		return "", "", err
+	}
 	agent, agentDis, err := wScriptShell()
 	if err != nil {
 		return "", "", err
@@ -46,6 +52,14 @@ func Read(path string) (string, string, error) {
 
 // MakeShortcut makes *.lnk file
 func Make(from, to, dir string) error {
+	from, err := filepath.Abs(from)
+	if err != nil {
+		return err
+	}
+	to, err = filepath.Abs(to)
+	if err != nil {
+		return err
+	}
 	agent, agentDis, err := wScriptShell()
 	if err != nil {
 		return err
