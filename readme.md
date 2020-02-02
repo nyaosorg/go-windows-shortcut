@@ -1,6 +1,8 @@
 go-windows-shortcut
 ===================
 
+[![GoDoc](https://godoc.org/github.com/zetamatta/go-windows-shortcut?status.svg)](https://godoc.org/github.com/zetamatta/go-windows-shortcut)
+
 ```go
 // +build run
 
