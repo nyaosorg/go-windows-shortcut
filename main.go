@@ -7,14 +7,14 @@ import (
 	"github.com/go-ole/go-ole/oleutil"
 )
 
-// WShell is the OLE Object for "WScript.Shell"
-type WShell struct {
+// _WShell is the OLE Object for "WScript.Shell"
+type _WShell struct {
 	agent    *ole.IUnknown
 	dispatch *ole.IDispatch
 }
 
-// NewWShell creates OLE Object for "WScript.Shell".
-func NewWShell() (*WShell, error) {
+// _NewWShell creates OLE Object for "WScript.Shell".
+func _NewWShell() (*_WShell, error) {
 	agent, err := oleutil.CreateObject("WScript.Shell")
 	if err != nil {
 		return nil, err
@@ -24,17 +24,17 @@ func NewWShell() (*WShell, error) {
 		agent.Release()
 		return nil, err
 	}
-	return &WShell{agent: agent, dispatch: dispatch}, nil
+	return &_WShell{agent: agent, dispatch: dispatch}, nil
 }
 
 // Close releases the OLE Object for "WScript.Shell".
-func (wsh *WShell) Close() {
+func (wsh *_WShell) Close() {
 	wsh.dispatch.Release()
 	wsh.agent.Release()
 }
 
 // Read reads the data of shortcut file. `path` must be absolute path.
-func (wsh *WShell) Read(path string) (target string, workingdir string, err error) {
+func (wsh *_WShell) Read(path string) (target string, workingdir string, err error) {
 	shortcut, err := oleutil.CallMethod(wsh.dispatch, "CreateShortCut", path)
 	if err != nil {
 		return "", "", err
@@ -58,7 +58,7 @@ func Read(path string) (targetPath string, workingDir string, err error) {
 	if err != nil {
 		return "", "", err
 	}
-	wsh, err := NewWShell()
+	wsh, err := _NewWShell()
 	if err != nil {
 		return "", "", err
 	}
@@ -68,7 +68,7 @@ func Read(path string) (targetPath string, workingDir string, err error) {
 }
 
 // Make makes a shortcut file.`from`,`to` must be absolute path.
-func (wsh *WShell) Make(from, to, dir string) error {
+func (wsh *_WShell) Make(from, to, dir string) error {
 	shortcut, err := oleutil.CallMethod(wsh.dispatch, "CreateShortCut", to)
 	if err != nil {
 		return err
@@ -97,7 +97,7 @@ func Make(from, to, dir string) error {
 	if err != nil {
 		return err
 	}
-	wsh, err := NewWShell()
+	wsh, err := _NewWShell()
 	if err != nil {
 		return err
 	}
