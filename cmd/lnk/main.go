@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-ole/go-ole"
 	_ "github.com/mattn/getwild"
-	"github.com/zetamatta/go-windows-shortcut"
+	"github.com/nyaosorg/go-windows-shortcut"
 )
 
 func mains(args []string) error {

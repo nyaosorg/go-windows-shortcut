@@ -1,3 +1,4 @@
+//go:build run
 // +build run
 
 package main
@@ -7,7 +8,7 @@ import (
 	"os"
 
 	"github.com/go-ole/go-ole"
-	"github.com/zetamatta/go-windows-shortcut"
+	"github.com/nyaosorg/go-windows-shortcut"
 )
 
 func main1() error {

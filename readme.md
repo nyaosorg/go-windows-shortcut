@@ -1,7 +1,7 @@
 go-windows-shortcut
 ===================
 
-[![GoDoc](https://godoc.org/github.com/zetamatta/go-windows-shortcut?status.svg)](https://godoc.org/github.com/zetamatta/go-windows-shortcut)
+[![GoDoc](https://godoc.org/github.com/nyaosorg/go-windows-shortcut?status.svg)](https://godoc.org/github.com/nyaosorg/go-windows-shortcut)
 
 ```go
 // +build run
@@ -13,7 +13,7 @@ import (
     "os"
 
     "github.com/go-ole/go-ole"
-    "github.com/zetamatta/go-windows-shortcut"
+    "github.com/nyaosorg/go-windows-shortcut"
 )
 
 func main1() error {
@@ -50,5 +50,5 @@ func main() {
 ```
 $ go run example.go .. parent.lnk
 make shortcut: .. --> parent.lnk
-read shortcut: parent.lnk <-- C:\Users\hymko\go\src\github.com\zetamatta
+read shortcut: parent.lnk <-- C:\Users\hymko\go\src\github.com\nyaosorg
 ```
